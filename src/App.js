@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 //require('dotenv').config({ path: ".env" });
 
@@ -11,47 +11,49 @@ const web3 = new Web3(new Web3.providers.HttpProvider(InfuraURL));
 
 const App = () => {
     const [address, setAddress] = useState("");
+    let [results, setResults] = useState(false);
 
     const handleInput = event => {
         setAddress(event.target.value);
     };
 
+    // Blockchain Data Variables
+    let balance;
+    let ethBalance;
+    let transactionCount = 0;
+
+    let addressAcquired = false;
+    let WalletResults;
+
     const logValue = async () => {
         console.log(address);
         // get balance of address and convert it to string
-        let balance = String(await web3.eth.getBalance(address, 14134416));
+        balance = String(await web3.eth.getBalance(address, 14134416));
         console.log(balance);
         // convert balance from wei to eth
-        let ethBalance = await web3.utils.fromWei(balance, 'ether');
+        ethBalance = await web3.utils.fromWei(balance, 'ether');
 
         console.log(ethBalance); 
         
-        let transactionCount = await web3.eth.getTransactionCount(address, 13916165);
+        transactionCount = await web3.eth.getTransactionCount(address, 13916165);
 
         console.log(transactionCount);
-    }
+        WalletResults = (<div>
+            <h3>Wallet Address<br /></h3>
+            {address}<br />
+            <h3>Current Balance:<br /></h3>
+            {ethBalance + ' ETH'}
 
-    // const setBalance = async () => {
-    //     const balance = await web3.getBalance(address);
-    // }
+        </div>);
+        setResults(true);
+    };
 
+    // const renderResults = () => {
+    //     <button onClick={logValue} className="form-button">
+    //         Get Results
+    //     </button>
+    // };
 
-
-    // let balance = web3.eth.getBalance(address, (err, wei) => {
-    //      balance = web3.utils.fromWei(wei, 'ether')
-    //    })
-    //let balance = 0;
-
-    // async function newBalance() {
-    //     balance = await web3.eth.getBalance(address);
-    // }
-
-    //const balance = await web3.eth.getBalance(address);
-      
-
-    //console.log(newBalance());
-
-    //web3.eth.getBalance(address).then(console.log);
     
     
     return (
@@ -63,15 +65,6 @@ const App = () => {
                     </h1>
                 </div>
                 <div className="formContainer">
-                    {/* <form>
-                        <label className="sub-text">
-                        Enter an Ethereum wallet address to see your 2021 stats! 
-                        </label>
-                        <br />
-                        <input onChange={handleInput} className="text-input" type="text" name="wallet" id="wallet" placeholder="0x..." required/>
-                        <br />
-                        <input onClick={logValue} className="form-button" type="submit" name="submit" id="submit"/>
-                    </form> */}
                     <label className="sub-text">
                         Enter an Ethereum wallet address to see your 2021 stats! 
                     </label>
@@ -80,10 +73,12 @@ const App = () => {
                     <input onChange={handleInput} className="text-input" type="text" name="wallet" id="wallet" placeholder="0x..." required/>
                     <br />
                     <input onClick={logValue} className="form-button" type="submit" name="submit" id="submit"/>
-                </div>
+
+                    {/* { results ? <WalletResults /> : <p>this is a test</p>} */}
+
 
     
-                
+               </div> 
             </div>
         </div>
     )
