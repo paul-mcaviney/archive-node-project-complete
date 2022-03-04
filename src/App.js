@@ -25,7 +25,7 @@ const App = () => {
     let balance;
 
 
-    const logValue = async () => {
+    const accessEthereum = async () => {
 
             // get balance of address and convert it to string
             balance = String(await web3.eth.getBalance(address, 14134416));
@@ -54,17 +54,20 @@ const App = () => {
                         ETH Year in Review
                     </h1>
                 </div>
+
                 <div className="formContainer">
                     {!results ? (
                         <div>
-                        <h2 className="sub-text">
-                            Enter an Ethereum wallet address to see your 2021 stats! 
-                        </h2>
-                        <p>0x64ae4fD3E9906ee4A0189e3A393d19b3e35cdb67</p>
-                        <br />
-                        <input onChange={handleInput} className="text-input" type="text" name="wallet" id="wallet" placeholder="0x..." required/>
-                        <br />
-                        <button onClick={logValue} className="form-button" type="submit" name="submit" id="submit">Submit</button>
+                            <h2 className="sub-text">
+                                Enter an Ethereum wallet address to see your 2021 stats! 
+                            </h2>
+                            <p>0x64ae4fD3E9906ee4A0189e3A393d19b3e35cdb67</p>
+                            <br />
+                            <input onChange={handleInput} className="text-input" type="text" name="wallet" id="wallet" placeholder="0x..." required/>
+                            <br />
+                            <button onClick={accessEthereum} className="form-button" type="submit" name="submit" id="submit">
+                                Submit
+                            </button>
                         </div>
                     ) : <div>
                             <h2>Here are your results!</h2>
@@ -73,8 +76,6 @@ const App = () => {
                             <p>Number of transactions: {transactionCount}</p>
                             <button onClick={reset} className="form-button" id="restart" name="restart">Enter New Address</button>
                         </div>} 
-
-    
                </div> 
             </div>
         </div>
@@ -85,8 +86,7 @@ const App = () => {
 export default App;
 
 
-// TODO: import web3 and set variables + add infura API variable
-// TODO: create a view that updates when you hit the submit button
+// TODO: get environment variable working properly
 // TODO: create a function that takes the wallet address submitted and gets data
             // gets account balance at end of 2021 and beginning of 2021
             // number of transactions in between those blocks
