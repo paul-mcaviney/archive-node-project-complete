@@ -10,48 +10,41 @@ const web3 = new Web3(new Web3.providers.HttpProvider(InfuraURL));
 
 
 const App = () => {
+    // State variables
     const [address, setAddress] = useState("");
-    let [results, setResults] = useState(false);
+    const [results, setResults] = useState(false);
+    const [ethBalance, setEthBalnce] = useState(0);
+    const [transactionCount, setTransactionCount] = useState(0);
 
+    // set the address to user input
     const handleInput = event => {
         setAddress(event.target.value);
     };
 
-    // Blockchain Data Variables
+    // variable to store balance in wei
     let balance;
-    let ethBalance;
-    let transactionCount = 0;
 
-    let addressAcquired = false;
 
     const logValue = async () => {
-        //console.log(address);
-        // get balance of address and convert it to string
-        balance = String(await web3.eth.getBalance(address, 14134416));
-        //console.log(balance);
-        // convert balance from wei to eth
-        ethBalance = await web3.utils.fromWei(balance, 'ether');
 
-        console.log(ethBalance + ' ETH'); 
-        
-        transactionCount = await web3.eth.getTransactionCount(address, 13916165);
+            // get balance of address and convert it to string
+            balance = String(await web3.eth.getBalance(address, 14134416));
 
-        console.log(transactionCount + ' Transactions');
+            // convert balance from wei to eth
+            setEthBalnce(await web3.utils.fromWei(balance, 'ether'));
 
-        setResults(true);
+            // Get number of transactions
+            setTransactionCount(await web3.eth.getTransactionCount(address, 13916165));
+            
+            // received results, condition met to show them on screen
+            setResults(true);
+
     };
 
-    // const renderResults = () => {
-    //     <button onClick={logValue} className="form-button">
-    //         Get Results
-    //     </button>
-    // };
-
-    const getEthBalance = () => {
-        return ethBalance;
-    }
-
-    
+    const reset = () => {
+        setResults(false);
+    };
+   
     
     return (
         <div className="App">
@@ -64,33 +57,22 @@ const App = () => {
                 <div className="formContainer">
                     {!results ? (
                         <div>
-                        <label className="sub-text">
-                        Enter an Ethereum wallet address to see your 2021 stats! 
-                        </label>
+                        <h2 className="sub-text">
+                            Enter an Ethereum wallet address to see your 2021 stats! 
+                        </h2>
                         <p>0x64ae4fD3E9906ee4A0189e3A393d19b3e35cdb67</p>
                         <br />
                         <input onChange={handleInput} className="text-input" type="text" name="wallet" id="wallet" placeholder="0x..." required/>
                         <br />
-                        <input onClick={logValue} className="form-button" type="submit" name="submit" id="submit"/>
+                        <button onClick={logValue} className="form-button" type="submit" name="submit" id="submit">Submit</button>
                         </div>
                     ) : <div>
-                            <h2>Results for {address}</h2>
-                            <p>ETH Balance: {getEthBalance()}</p>
+                            <h2>Here are your results!</h2>
+                            <h3>{address}</h3>
+                            <p>Balance: {ethBalance} ETH</p>
                             <p>Number of transactions: {transactionCount}</p>
-                        </div>}
-
-
-                    {/* <label className="sub-text">
-                        Enter an Ethereum wallet address to see your 2021 stats! 
-                    </label>
-                    <p>0x64ae4fD3E9906ee4A0189e3A393d19b3e35cdb67</p>
-                    <br />
-                    <input onChange={handleInput} className="text-input" type="text" name="wallet" id="wallet" placeholder="0x..." required/>
-                    <br />
-                    <input onClick={logValue} className="form-button" type="submit" name="submit" id="submit"/> */}
-
-                    {/* { results ? <WalletResults /> : <p>this is a test</p>} */}
-
+                            <button onClick={reset} className="form-button" id="restart" name="restart">Enter New Address</button>
+                        </div>} 
 
     
                </div> 
