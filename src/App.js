@@ -13,7 +13,9 @@ const App = () => {
     // State variables
     const [address, setAddress] = useState("");
     const [results, setResults] = useState(false);
-    const [ethBalance, setEthBalnce] = useState(0);
+    const [ethBalance, setEthBalance] = useState(0);
+    const [endOfYearBalance, setEndOfYearBalance] = useState(0);
+    const [balanceDifference, setBalanceDifference] = useState(0);
     const [transactionCount, setTransactionCount] = useState(0);
 
     // set the address to user input
@@ -22,26 +24,60 @@ const App = () => {
     };
 
     // variable to store balance in wei
-    let balance;
-    let startOfYearBalance;
-    let endOfYearBalance;
-    let startOfYearTransactions;
+    //let balance;
+    // let wei;
+    // let startOfYearBalance;
+    // let endOfYearBalance;
+    //let startOfYearTransactions;
     let endOfYearTransactions;
 
 
     const accessEthereum = async () => {
 
-            // get balance of address and convert it to string
-            balance = String(await web3.eth.getBalance(address, 14134416));
+        // Get current balance of address and convert it to string 
+        let balance = String(await web3.eth.getBalance(address));
 
-            // convert balance from wei to eth
-            setEthBalnce(await web3.utils.fromWei(balance, 'ether'));
+        // Set ethBalance and convert balance from wei to eth
+        setEthBalance(await web3.utils.fromWei(balance, 'ether'));
+        
+        // Get wallet balance at the start of 2021 (Block #11565019)
+        let startBalance = await web3.eth.getBalance(address, 11565019);
+
+        // Get wallet balance at the end of 2021 (Block #13916165)
+        let endBalance = String(await web3.eth.getBalance(address, 13916165));
+
+        // Set endOfYearBalance and convert to ETH
+        setEndOfYearBalance(await web3.utils.fromWei(endBalance, 'ether'));
+         
+        // TODO: this is throwing an error because the Big Number has a decimal
+        // Find difference in balance from start of year to end
+        //let difference = String(Math.round(endBalance - startBalance));
+        let difference = Math.round(endBalance - startBalance);
+        console.log(difference);
+        difference = String(difference);
+
+        // Set balanceDifference and convert to ETH
+        setBalanceDifference(await web3.utils.fromWei(difference, 'ether'));
+
+        // Get transaction count at start of 2021 (Block #11565019)
+        let startTransactions = await web3.eth.getTransactionCount(address, 11565019);
+
+        // Get transaction count at end of 2021 (Block #13916165)
+        let endTransactions = await web3.eth.getTransactionCount(address, 13916165);
+
+        // Set total transaction count in 2021
+        setTransactionCount(endTransactions - startTransactions);
+
+        // Received results, condition met to show them on screen
+        setResults(true);    
+
+            
 
             // Get number of transactions
-            setTransactionCount(await web3.eth.getTransactionCount(address, 13916165));
+            //setTransactionCount(await web3.eth.getTransactionCount(address, 13916165));
             
             // received results, condition met to show them on screen
-            setResults(true);
+           // setResults(true);
 
     };
 
@@ -76,8 +112,10 @@ const App = () => {
                     ) : <div>
                             <h2>Here are your results!</h2>
                             <h3>{address}</h3>
-                            <p>Balance: {ethBalance} ETH</p>
-                            <p>Number of transactions: {transactionCount}</p>
+                            <p>Current Balance: {ethBalance} ETH</p>
+                            <p>End of 2021 Balance: {endOfYearBalance} ETH</p>
+                            <p>Difference from Start of 2021: {balanceDifference} ETH</p>
+                            <p>Number of transactions in 2021: {transactionCount}</p>
                             <button onClick={reset} className="form-button" id="restart" name="restart">Enter New Address</button>
                         </div>} 
                </div> 
