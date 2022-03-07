@@ -23,6 +23,10 @@ const App = () => {
 
     // variable to store balance in wei
     let balance;
+    let startOfYearBalance;
+    let endOfYearBalance;
+    let startOfYearTransactions;
+    let endOfYearTransactions;
 
 
     const accessEthereum = async () => {
