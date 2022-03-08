@@ -1,15 +1,14 @@
 import './App.css';
 import React, { useState } from 'react';
 
-//require('dotenv').config({ path: '.env' });
-
 const Web3 = require('web3');
-//const InfuraURL = process.env.INFURA_URL;
-const InfuraURL = 'http://localhost:8545'; // If no archive access via Infura directly, can use ganache
-const web3 = new Web3(new Web3.providers.HttpProvider(InfuraURL));
+//const infuraURL = { YOUR_URL_HERE };
+const infuraURL = 'http://localhost:8545'; // If no archive access via Infura, can use `ganache --fork`
+const web3 = new Web3(new Web3.providers.HttpProvider(infuraURL));
 
 
 const App = () => {
+    
     // State variables
     const [address, setAddress] = useState('');
     const [results, setResults] = useState(false);
@@ -19,13 +18,14 @@ const App = () => {
     const [balanceDifference, setBalanceDifference] = useState(0);
     const [transactionCount, setTransactionCount] = useState(0);
 
+
     // set the address to user input
     const handleInput = event => {
         setAddress(event.target.value);
     };
 
-    //let isPositive = false;
 
+    // Access data from Ethereum blockchain
     const accessEthereum = async () => {
 
         // Get current balance of address and convert it to string 
@@ -124,13 +124,3 @@ const App = () => {
 
 
 export default App;
-
-
-// TODO: get environment variable working properly
-// TODO: create a function that takes the wallet address submitted and gets data
-            // gets account balance at end of 2021 and beginning of 2021
-            // number of transactions in between those blocks
-            // 
-// Block number at start of 2021 : 11565019
-// Block number at end of 2021 : 13916165
-// ganache --fork to run a node with archive access
