@@ -1,19 +1,19 @@
 import './App.css';
 import React, { useState } from 'react';
 
-//require('dotenv').config({ path: ".env" });
+//require('dotenv').config({ path: '.env' });
 
 const Web3 = require('web3');
 //const InfuraURL = process.env.INFURA_URL;
-const InfuraURL = "http://localhost:8545"; // If no archive access via Infura directly, can use ganache
+const InfuraURL = 'http://localhost:8545'; // If no archive access via Infura directly, can use ganache
 const web3 = new Web3(new Web3.providers.HttpProvider(InfuraURL));
 
 
 const App = () => {
     // State variables
-    const [address, setAddress] = useState("");
+    const [address, setAddress] = useState('');
     const [results, setResults] = useState(false);
-    const [ethBalance, setEthBalance] = useState(0);
+    const [currentBalance, setCurrentBalance] = useState(0);
     const [startOfYearBalance, setStartOfYearBalance] = useState(0);
     const [endOfYearBalance, setEndOfYearBalance] = useState(0);
     const [balanceDifference, setBalanceDifference] = useState(0);
@@ -24,14 +24,7 @@ const App = () => {
         setAddress(event.target.value);
     };
 
-    // variable to store balance in wei
-    //let balance;
-    // let wei;
-    // let startOfYearBalance;
-    // let endOfYearBalance;
-    //let startOfYearTransactions;
-    let endOfYearTransactions;
-
+    //let isPositive = false;
 
     const accessEthereum = async () => {
 
@@ -39,30 +32,24 @@ const App = () => {
         let balance = String(await web3.eth.getBalance(address));
 
         // Set ethBalance and convert balance from wei to eth
-        setEthBalance(await web3.utils.fromWei(balance, 'ether'));
+        setCurrentBalance(await web3.utils.fromWei(balance, 'ether'));
         
         // Get wallet balance at the start of 2021 (Block #11565019)
         let startBalance = await web3.eth.getBalance(address, 11565019);
-        console.log(startBalance);
 
         // Get wallet balance at the end of 2021 (Block #13916165)
         let endBalance = await web3.eth.getBalance(address, 13916165);
-        console.log(endBalance);
-
-        // Set endOfYearBalance and convert to ETH
-        setEndOfYearBalance(await web3.utils.fromWei(endBalance.toString(), 'ether'));
          
-        // Find difference in balance from start of year to end
+        // Convert startBalance to ETH and set state variable
         startBalance = await web3.utils.fromWei(startBalance.toString(), 'ether');
-        console.log(startBalance + " eth start");
+        setStartOfYearBalance(startBalance);
+
+        // Convert endBalance to ETH and set state variable
         endBalance = await web3.utils.fromWei(endBalance.toString(), 'ether');
-        console.log(endBalance + ' eth end');
+        setEndOfYearBalance(endBalance);
 
-        const difference = await web3.utils.toWei((endBalance - startBalance).toString());
-        console.log(difference);
-
-        // Set balanceDifference and convert to ETH
-        setBalanceDifference(await web3.utils.fromWei(difference.toString(), 'ether'));
+        // Set balanceDifference from start to end of 2021
+        setBalanceDifference(endBalance - startBalance);
 
         // Get transaction count at start of 2021 (Block #11565019)
         let startTransactions = await web3.eth.getTransactionCount(address, 11565019);
@@ -76,14 +63,6 @@ const App = () => {
         // Received results, condition met to show them on screen
         setResults(true);    
 
-            
-
-            // Get number of transactions
-            //setTransactionCount(await web3.eth.getTransactionCount(address, 13916165));
-            
-            // received results, condition met to show them on screen
-           // setResults(true);
-
     };
 
     const reset = () => {
@@ -92,36 +71,50 @@ const App = () => {
    
     
     return (
-        <div className="App">
-            <div className="container">
-                <div className="header-container">
-                    <h1 className="header gradient-text">
+        <div className='App'>
+            <div className='container'>
+                <div className='header-container'>
+                    <h1 className='header gradient-text'>
                         ETH Year in Review
                     </h1>
                 </div>
 
-                <div className="formContainer">
+                <div className='formContainer'>
                     {!results ? (
                         <div>
-                            <h2 className="sub-text">
+                            <h2 className='sub-text'>
                                 Enter an Ethereum wallet address to see your 2021 stats! 
                             </h2>
-                            <p>0x64ae4fD3E9906ee4A0189e3A393d19b3e35cdb67</p>
+                            <p>If you don't have a wallet address, feel free to use Vitalik's ;)</p>
+                            <p>0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045</p>
+                            
+                            <input onChange={handleInput} className='text-input' type='text' name='wallet' id='wallet' placeholder='0x...' required/>
                             <br />
-                            <input onChange={handleInput} className="text-input" type="text" name="wallet" id="wallet" placeholder="0x..." required/>
-                            <br />
-                            <button onClick={accessEthereum} className="form-button" type="submit" name="submit" id="submit">
+                            <button onClick={accessEthereum} className='form-button' type='submit' name='submit' id='submit'>
                                 Submit
                             </button>
                         </div>
                     ) : <div>
                             <h2>Here are your results!</h2>
                             <h3>{address}</h3>
-                            <p>Current Balance: {ethBalance} ETH</p>
-                            <p>End of 2021 Balance: {endOfYearBalance} ETH</p>
-                            <p>Difference from Start of 2021: {balanceDifference} ETH</p>
-                            <p>Number of transactions in 2021: {transactionCount}</p>
-                            <button onClick={reset} className="form-button" id="restart" name="restart">Enter New Address</button>
+
+                            <p className='result-heading'>Current Balance</p>
+                            <p>{currentBalance} ETH</p>
+
+                            <p className='result-heading'>Start of 2021 Balance</p>
+                            <p>{startOfYearBalance} ETH</p>
+
+                            <p className='result-heading'>End of 2021 Balance</p>
+                            <p>{endOfYearBalance} ETH</p>
+
+                            <p className='result-heading'>Difference from Start of 2021</p>
+                            <p>{balanceDifference} ETH</p>
+
+                            <p className='result-heading'>Number of transactions in 2021</p>
+                            <p>{transactionCount}</p>
+                            <br />
+
+                            <button onClick={reset} className='form-button' id='restart' name='restart'>Enter New Address</button>
                         </div>} 
                </div> 
             </div>
