@@ -14,6 +14,7 @@ const App = () => {
     const [address, setAddress] = useState("");
     const [results, setResults] = useState(false);
     const [ethBalance, setEthBalance] = useState(0);
+    const [startOfYearBalance, setStartOfYearBalance] = useState(0);
     const [endOfYearBalance, setEndOfYearBalance] = useState(0);
     const [balanceDifference, setBalanceDifference] = useState(0);
     const [transactionCount, setTransactionCount] = useState(0);
@@ -42,22 +43,26 @@ const App = () => {
         
         // Get wallet balance at the start of 2021 (Block #11565019)
         let startBalance = await web3.eth.getBalance(address, 11565019);
+        console.log(startBalance);
 
         // Get wallet balance at the end of 2021 (Block #13916165)
-        let endBalance = String(await web3.eth.getBalance(address, 13916165));
+        let endBalance = await web3.eth.getBalance(address, 13916165);
+        console.log(endBalance);
 
         // Set endOfYearBalance and convert to ETH
-        setEndOfYearBalance(await web3.utils.fromWei(endBalance, 'ether'));
+        setEndOfYearBalance(await web3.utils.fromWei(endBalance.toString(), 'ether'));
          
-        // TODO: this is throwing an error because the Big Number has a decimal
         // Find difference in balance from start of year to end
-        //let difference = String(Math.round(endBalance - startBalance));
-        let difference = Math.round(endBalance - startBalance);
+        startBalance = await web3.utils.fromWei(startBalance.toString(), 'ether');
+        console.log(startBalance + " eth start");
+        endBalance = await web3.utils.fromWei(endBalance.toString(), 'ether');
+        console.log(endBalance + ' eth end');
+
+        const difference = await web3.utils.toWei((endBalance - startBalance).toString());
         console.log(difference);
-        difference = String(difference);
 
         // Set balanceDifference and convert to ETH
-        setBalanceDifference(await web3.utils.fromWei(difference, 'ether'));
+        setBalanceDifference(await web3.utils.fromWei(difference.toString(), 'ether'));
 
         // Get transaction count at start of 2021 (Block #11565019)
         let startTransactions = await web3.eth.getTransactionCount(address, 11565019);
