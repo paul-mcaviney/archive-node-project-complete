@@ -85,7 +85,7 @@ const App = () => {
                             <h2 className='sub-text'>
                                 Enter an Ethereum wallet address to see your 2021 stats! 
                             </h2>
-                            <p>If you don't have a wallet address, feel free to use Vitalik's ;)</p>
+                            <p>If you don't have a wallet address, feel free to use <a href='https://etherscan.io/address/0xd8da6bf26964af9d7eed9e03e53415d37aa96045' target='_blank'>Vitalik's</a> ;)</p>
                             <p>0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045</p>
                             
                             <input onChange={handleInput} className='text-input' type='text' name='wallet' id='wallet' placeholder='0x...' required/>
@@ -117,6 +117,7 @@ const App = () => {
                             <button onClick={reset} className='form-button' id='restart' name='restart'>Enter New Address</button>
                         </div>} 
                </div> 
+               <p>Additional Resources: <a href='https://web3js.readthedocs.io/en/v1.7.0/web3.html' target='_blank'>Web3.js Docs</a>, <a href='https://docs.infura.io/infura/networks/ethereum' target='_blank'>Infura Docs</a></p> 
             </div>
         </div>
     )
