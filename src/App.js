@@ -10,8 +10,8 @@ const web3 = new Web3(new Web3.providers.HttpProvider(infuraURL));
 const App = () => {
     
     // State variables
-    const [address, setAddress] = useState('');
     const [results, setResults] = useState(false);
+    const [address, setAddress] = useState('');
     const [currentBalance, setCurrentBalance] = useState(0);
     const [startOfYearBalance, setStartOfYearBalance] = useState(0);
     const [endOfYearBalance, setEndOfYearBalance] = useState(0);
@@ -25,14 +25,20 @@ const App = () => {
     };
 
 
+    // Reset the app
+    const reset = () => {
+        setResults(false);
+    };
+
+
     // Access data from Ethereum blockchain
     const accessEthereum = async () => {
 
         // Get current balance of address and convert it to string 
-        let balance = String(await web3.eth.getBalance(address));
+        let balance = await web3.eth.getBalance(address);
 
-        // Set ethBalance and convert balance from wei to eth
-        setCurrentBalance(await web3.utils.fromWei(balance, 'ether'));
+        // Set ethBalance and convert balance from wei to ETH
+        setCurrentBalance(await web3.utils.fromWei(balance.toString(), 'ether'));
         
         // Get wallet balance at the start of 2021 (Block #11565019)
         let startBalance = await web3.eth.getBalance(address, 11565019);
@@ -63,10 +69,6 @@ const App = () => {
         // Received results, condition met to show them on screen
         setResults(true);    
 
-    };
-
-    const reset = () => {
-        setResults(false);
     };
    
     
