@@ -2,8 +2,7 @@ import './App.css';
 import React, { useState } from 'react';
 
 const Web3 = require('web3');
-//const infuraURL = { YOUR_URL_HERE };
-const infuraURL = 'http://localhost:8545'; // If no archive access via Infura, can use `ganache --fork`
+const infuraURL = 'YOUR_INFURA_URL_HERE';
 const web3 = new Web3(new Web3.providers.HttpProvider(infuraURL));
 
 
@@ -34,34 +33,38 @@ const App = () => {
     // Access data from Ethereum blockchain
     const accessEthereum = async () => {
 
-        // Get current balance of address and convert it to string 
-        let balance = await web3.eth.getBalance(address);
+        // 2021 Start and End Block variables
+        const START_2021_BLOCK = 11565019;
+        const END_2021_BLOCK = 13916165;
 
-        // Set ethBalance and convert balance from wei to ETH
+        // Get current balance of address and convert it to string 
+        const balance = await web3.eth.getBalance(address);
+
+        // Convert balance from wei to ETH and set state variable
         setCurrentBalance(await web3.utils.fromWei(balance.toString(), 'ether'));
         
         // Get wallet balance at the start of 2021 (Block #11565019)
-        let startBalance = await web3.eth.getBalance(address, 11565019);
+        const startBalance = await web3.eth.getBalance(address, START_2021_BLOCK);
 
         // Get wallet balance at the end of 2021 (Block #13916165)
-        let endBalance = await web3.eth.getBalance(address, 13916165);
+        let endBalance = await web3.eth.getBalance(address, END_2021_BLOCK);
          
         // Convert startBalance to ETH and set state variable
-        startBalance = await web3.utils.fromWei(startBalance.toString(), 'ether');
-        setStartOfYearBalance(startBalance);
+        const startBalanceAsETH = await web3.utils.fromWei(startBalance.toString(), 'ether');
+        setStartOfYearBalance(startBalanceAsETH);
 
         // Convert endBalance to ETH and set state variable
-        endBalance = await web3.utils.fromWei(endBalance.toString(), 'ether');
-        setEndOfYearBalance(endBalance);
+        const endBalanceAsETH = await web3.utils.fromWei(endBalance.toString(), 'ether');
+        setEndOfYearBalance(endBalanceAsETH);
 
         // Set balanceDifference from start to end of 2021
-        setBalanceDifference(endBalance - startBalance);
+        setBalanceDifference(endBalanceAsETH - startBalanceAsETH);
 
         // Get transaction count at start of 2021 (Block #11565019)
-        let startTransactions = await web3.eth.getTransactionCount(address, 11565019);
+        let startTransactions = await web3.eth.getTransactionCount(address, START_2021_BLOCK);
 
         // Get transaction count at end of 2021 (Block #13916165)
-        let endTransactions = await web3.eth.getTransactionCount(address, 13916165);
+        let endTransactions = await web3.eth.getTransactionCount(address, END_2021_BLOCK);
 
         // Set total transaction count in 2021
         setTransactionCount(endTransactions - startTransactions);
